@@ -1,11 +1,11 @@
 {
   "current": {
-    "partydawn_trekkie_enabled": false,
-    "partydawn_klaviyo_enabled": false,
+    "partydawn_trekkie_enabled": true,
+    "partydawn_klaviyo_enabled": true,
     "partydawn_klaviyo_id": "SgGtYk",
-    "partydawn_gtm_enabled": false,
+    "partydawn_gtm_enabled": true,
     "partydawn_gtm_id": "GTM-MRST3B5R",
-    "partydawn_matomo_enabled": false,
+    "partydawn_matomo_enabled": true,
     "partydawn_matomo_url": "https:\/\/matomo.uncnso.red\/",
     "partydawn_matomo_site_id": "1",
     "logo_width": 90,
@@ -151,6 +151,12 @@
       },
       "5946647744298494267": {
         "type": "shopify:\/\/apps\/wishlist-plus\/blocks\/wishlist-app-embed\/80c3b1fc-3a8f-407e-8367-ffdeebb8b612",
+        "disabled": false,
+        "settings": {
+        }
+      },
+      "14060646107696862457": {
+        "type": "shopify:\/\/apps\/judge-me-reviews\/blocks\/judgeme_core\/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
         "disabled": false,
         "settings": {
         }
