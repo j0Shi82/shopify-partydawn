@@ -1,0 +1,202 @@
+{% comment %}
+<!-- DO NOT EDIT!! - Auto generated file->
+<!-- To add modifications, create a separate file and include in theme.liquid after {% include swymSnippet %}-->
+{% endcomment %}
+<link rel="dns-prefetch" href="https://swymstore-v3free-01.swymrelay.com" crossorigin>
+<link rel="dns-prefetch" href="//swymv3free-01.azureedge.net/code/swym-shopify.js">
+<link rel="preconnect" href="//swymv3free-01.azureedge.net/code/swym-shopify.js">
+<script id="swym-snippet">
+  window.swymLandingURL = document.URL;
+  window.swymCart = {{ cart | json }};
+  window.swymPageLoad = function(){
+    window.SwymProductVariants = window.SwymProductVariants || {};
+    window.SwymHasCartItems = {{cart.item_count|json}} > 0;
+    window.SwymPageData = {}, window.SwymProductInfo = {};
+    {%- if product and template.name == 'product' -%}
+    var variants = [];
+    window.SwymProductInfo.product = {{ product | json }};
+    window.SwymProductInfo.variants = window.SwymProductInfo.product.variants;
+    var piu = {{ product.featured_image | img_url: '620x620' | json }};
+    {% if product.selected_or_first_available_variant %}
+    {% assign currentVariant = product.selected_or_first_available_variant%}
+    {% else %}
+    {% assign currentVariant = product.variants[0] %}
+    {%- endif -%}
+    {%- for variant in product.variants -%}
+      {% if variant.selected %}
+        {% assign currentVariant = variant %}
+      {% endif %}
+      SwymProductVariants[{{variant.id|json}}] = {
+        empi:window.SwymProductInfo.product.id,epi:{{variant.id|json}},
+        dt: {{ product.title | json }},
+        du: "{{ shop.url }}{{ product.url }}",
+        iu: {% if variant.image %} {{ variant | img_url: '620x620' | json }} {% else %} piu {% endif %},
+        stk: {{variant.inventory_quantity}},
+        pr: {{variant.price}}/100,
+        ct: window.SwymProductInfo.product.type,
+        {% if variant.compare_at_price %} op: {{variant.compare_at_price}}/100, {% endif %}
+        variants: [{ {{ variant.title | json }} : {{variant.id|json}}}]
+      };
+    {%- endfor -%}
+    window.SwymProductInfo.currentVariant = {{currentVariant.id | json}};
+    var product_data = {
+      et: 1, empi: window.SwymProductInfo.product.id, epi: window.SwymProductInfo.currentVariant,
+      dt: {{ product.title | json }}, du: "{{ shop.url }}{{ product.url }}",
+      ct: window.SwymProductInfo.product.type, pr: {{ currentVariant.price }}/100,
+      iu: {% if currentVariant.image %} {{ currentVariant | img_url: '620x620' | json }} {% else %} piu {% endif %}, variants: [{ {{currentVariant.title | json}} : {{currentVariant.id | json}} }],
+      stk:{{ currentVariant.inventory_quantity }} {% if currentVariant.compare_at_price %} ,op:{{currentVariant.compare_at_price}}/100 {% endif %}
+    };
+    window.SwymPageData = product_data;
+    {% elsif collection %}
+    var collection = {{ collection | json }};
+    if (typeof collection === "undefined" || collection == null || collection.toString().trim() == ""){
+      var unknown = {et: 0};
+      window.SwymPageData = unknown;
+    }else{
+      var image = "";
+      if (typeof collection.image === "undefined" || collection.image == null || collection.image.toString().trim() == ""){}
+      else{image = collection.image.src;}
+      var collection_data = {
+        et: 2, dt: {{ collection.title | json}},
+        du: "{{shop.url}}/collections/{{collection.handle}}", iu: image
+      }
+      window.SwymPageData = collection_data;
+    }
+    {% else %}
+    var unknown = {et: 0};
+    window.SwymPageData = unknown;
+    {% endif %}
+    window.SwymPageData.uri = window.swymLandingURL;
+  };
+
+  if(window.selectCallback){
+    (function(){
+      // Variant select override
+      var originalSelectCallback = window.selectCallback;
+      window.selectCallback = function(variant){
+        originalSelectCallback.apply(this, arguments);
+        try{
+          if(window.triggerSwymVariantEvent){
+            window.triggerSwymVariantEvent(variant.id);
+          }
+        }catch(err){
+          console.warn("Swym selectCallback", err);
+        }
+      };
+    })();
+  }
+  window.swymCustomerId = {% if customer %}"{{ customer.id }}"{% else %}null{% endif %};
+  window.swymCustomerExtraCheck = {% if customer and customer.tags.size > 0 %}true{% else %}null{% endif %};
+
+  var swappName = ({{ shop.metafields.swym.app | json }} || "Wishlist");
+  var swymJSObject = {
+    pid: {{ shop.metafields.swym.pid | json }} || "IidxbefpDY8xM6orTI+H3MzGYx3wWqjM89b4SoQC7iM=",
+    interface: "/apps/swym" + swappName + "/interfaces/interfaceStore.php?appname=" + swappName
+  };
+  window.swymJSShopifyLoad = function(){
+    if(window.swymPageLoad) swymPageLoad();
+    if(!window._swat) {
+      (function (s, w, r, e, l, a, y) {
+        r['SwymRetailerConfig'] = s;
+        r[s] = r[s] || function (k, v) {
+          r[s][k] = v;
+        };
+      })('_swrc', '', window);
+      _swrc('RetailerId', swymJSObject.pid);
+      _swrc('Callback', function(){initSwymShopify();});
+    }else if(window._swat.postLoader){
+      _swrc = window._swat.postLoader;
+      _swrc('RetailerId', swymJSObject.pid);
+      _swrc('Callback', function(){initSwymShopify();});
+    }else{
+      initSwymShopify();
+    }
+  }
+  if(!window._SwymPreventAutoLoad) {
+    swymJSShopifyLoad();
+  }
+  window.swymGetCartCookies = function(){
+    var RequiredCookies = ["cart", "swym-session-id", "swym-swymRegid", "swym-email"];
+    var reqdCookies = {};
+    RequiredCookies.forEach(function(k){
+      reqdCookies[k] = _swat.storage.getRaw(k);
+    });
+    var cart_token = window.swymCart.token;
+    var data = {
+        action:'cart',
+        token:cart_token,
+        cookies:reqdCookies
+    };
+    return data;
+  }
+
+  window.swymGetCustomerData = function(){
+    {% if customer %}
+    var regid = _swat.get(_swat.key.REGID);
+    var swym_session_id = _swat.storage.getSessionId();
+    var customer_id = "{{ customer.id }}";
+    var data = {action: 'customer', regid:regid, customer_id:customer_id,swym_session_id:swym_session_id};
+    return {status:0,data:data};
+    {% else %}
+    return {status:1};
+    {% endif %}
+  }
+</script>
+{% if customer %}
+<script id="swym-wrap-login-handler">
+window.SwymCallbacks = window.SwymCallbacks || [];
+window.SwymCallbacks.push(function(swat) {
+  if(swat.isAlreadyAuth()) {
+    var postLoginRedirect = swat.storage.get(swat.key.POSTLOGINRD);
+    if(postLoginRedirect && postLoginRedirect != window.location) {
+      swat.storage.remove(swat.key.POSTLOGINRD);
+      window.location = postLoginRedirect;
+    }
+  }
+});
+</script>
+{% endif %}
+<style id="safari-flasher-pre"></style>
+<script>
+  if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+    document.getElementById("safari-flasher-pre").innerHTML = ''
+      + '#swym-plugin,#swym-hosted-plugin{display: none;}'
+      + '.swym-button.swym-add-to-wishlist{display: none;}'
+      + '.swym-button.swym-add-to-watchlist{display: none;}'
+      + '#swym-plugin  #swym-notepad, #swym-hosted-plugin  #swym-notepad{opacity: 0; visibility: hidden;}'
+      + '#swym-plugin  #swym-notepad, #swym-plugin  #swym-overlay, #swym-plugin  #swym-notification,'
+      + '#swym-hosted-plugin  #swym-notepad, #swym-hosted-plugin  #swym-overlay, #swym-hosted-plugin  #swym-notification'
+      + '{-webkit-transition: none; transition: none;}'
+      + '';
+    window.SwymCallbacks = window.SwymCallbacks || [];
+    window.SwymCallbacks.push(function(tracker){
+      tracker.evtLayer.addEventListener(tracker.JSEvents.configLoaded, function(){
+        // flash-preventer
+        var x = function(){
+          SwymUtils.onDOMReady(function() {
+            var d = document.createElement("div");
+            d.innerHTML = "<style id='safari-flasher-post'>"
+              + "#swym-plugin:not(.swym-ready),#swym-hosted-plugin:not(.swym-ready){display: none;}"
+              + ".swym-button.swym-add-to-wishlist:not(.swym-loaded){display: none;}"
+              + ".swym-button.swym-add-to-watchlist:not(.swym-loaded){display: none;}"
+              + "#swym-plugin.swym-ready  #swym-notepad, #swym-plugin.swym-ready  #swym-overlay, #swym-plugin.swym-ready  #swym-notification,"
+              + "#swym-hosted-plugin.swym-ready  #swym-notepad, #swym-hosted-plugin.swym-ready  #swym-overlay, #swym-hosted-plugin.swym-ready  #swym-notification"
+              + "{-webkit-transition: opacity 0.3s, visibility 0.3ms, -webkit-transform 0.3ms !important;-moz-transition: opacity 0.3s, visibility 0.3ms, -moz-transform 0.3ms !important;-ms-transition: opacity 0.3s, visibility 0.3ms, -ms-transform 0.3ms !important;-o-transition: opacity 0.3s, visibility 0.3ms, -o-transform 0.3ms !important;transition: opacity 0.3s, visibility 0.3ms, transform 0.3ms !important;}"
+              + "</style>";
+            document.head.appendChild(d);
+          });
+        };
+        setTimeout(x, 10);
+      });
+    });
+  }
+
+  // Get the money format for the store from shopify
+  window.SwymOverrideMoneyFormat = {{ shop.money_format | json}};
+</script>
+<style id="swym-product-view-defaults">
+  /* Hide when not loaded */
+  .swym-button.swym-add-to-wishlist-view-product:not(.swym-loaded){
+    display: none;
+  }
+</style>
