@@ -24,10 +24,6 @@ Currently included in this repo are four different ways of how to integrate Part
 - Connect Facebook using the [official integration](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel)
 - Go to the `Theme Customizer -> Theme Settings -> Partydawn` and fill out the settings as needed
 
-### Reopen Cookie Choices
-
-Go to your browser's developer console and invoke `showPreferences()`. Adding a button is a premium option for the consent app and I was lazy enough not to add one myself.
-
 ## Google Tag Manager
 
 - `snippets/header-partytown-analytics.liquid`
