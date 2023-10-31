@@ -24,21 +24,35 @@ function onCheckoutPage() {
   return init.context.document.location.pathname.indexOf('/checkout') === 0;
 }
 
+const state = {
+  partydawn_gtm_id: null,
+  partydawn_gtm_enabled: null,
+  partydawn_gtm_used: null,
+};
+
+async function getItem(item) {
+  if (state[item] !== null) return state[item];
+  try {
+    state[item] = await browser.sessionStorage.getItem(item);
+  } catch (e) {
+    state[item] = null;
+  }
+
+  return state[item];
+}
+
 var inc = 0;
 var sessionStorageAvailable = isSessionStorageAvailable();
 var localStorageAvailable = isLocalStorageAvailable();
 var isCheckout = onCheckoutPage();
 
 (async function (w, d, s, l) {
-  let gtmId = null;
-  let partytownEnabled = false;
-  try {
-    gtmId = await browser.sessionStorage.getItem('partydawn_gtm_id');
-    partytownEnabled = await browser.sessionStorage.getItem('partydawn_gtm_enabled');
-  } catch (e) {
-    gtmId = null;
-    partytownEnabled = false;
-  }
+  gtmId = await getItem('partydawn_gtm_id');
+  partytownEnabled = await getItem('partydawn_gtm_enabled');
+  gtmEnabled = await getItem('partydawn_gtm_used');
+
+  if (!gtmId || gtmEnabled !== 'true') return;
+
   if (!sessionStorageAvailable || isCheckout || partytownEnabled !== 'true') {
     w[l] = w[l] || [];
     w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
@@ -52,12 +66,11 @@ var isCheckout = onCheckoutPage();
 })(window, document, 'script', 'dataLayer');
 
 async function sendData(data) {
-  let partytownEnabled = false;
-  try {
-    partytownEnabled = await browser.sessionStorage.getItem('partydawn_gtm_enabled');
-  } catch (e) {
-    partytownEnabled = false;
-  }
+  partytownEnabled = await getItem('partydawn_gtm_enabled');
+  gtmEnabled = await getItem('partydawn_gtm_used');
+
+  if (gtmEnabled !== 'true') return;
+
   if (sessionStorageAvailable && !isCheckout && partytownEnabled === 'true') {
     browser.sessionStorage.setItem(`pt_dl_` + inc++, JSON.stringify(data));
   } else {
