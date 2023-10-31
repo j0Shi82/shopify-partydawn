@@ -64,7 +64,7 @@ if (isSessionStorageAvailable()) {
 
 If sessionStorage is not available the Pixel installs the GTM conventionally. This is also done on checkout pages which can't be directly controlled.
 
-Web Pixel play nicely with the integrated consent. They follow the rules defined on `Sales Channels -> Online Store -> Preferences -> Customer Privacy`. Whenever it feels appropriate to hook into Shopify's customer events for a tracking purposes, this is the way to go.
+Web Pixel play nicely with the integrated consent. They follow the rules defined on `Sales Channels -> Online Store -> Preferences -> Customer Privacy`. Whenever it feels appropriate to hook into Shopify's customer events for tracking purposes, this is the way to go.
 
 ## Matomo
 
@@ -72,7 +72,7 @@ Web Pixel play nicely with the integrated consent. They follow the rules defined
 - `snippets/matomo-tracking.liquid`
 - `backend/checkout/additional.liquid`
 
-There might be tracking that you can run regardless of the consent. You can just add it as `text/partytown` and Partytown will pick it up. Please note that you need to add additional tracking inside `Settings-> Checkout -> Order Status Page Additional Scripts`. This enables you to track the checkout as well. Unfortnuately we can't use Web Pixels here because they only run when the user consents. There is no way to add Pixels based on the user consent. This also means you unfortunately cannot track any checkout sub steps, just the conversion. But in most cases this should be fine.
+There might be tracking that you can run regardless of the consent. You can just add it as `text/partytown` and Partytown will pick it up. Please note that you need to add additional tracking inside `Settings-> Checkout -> Order Status Page Additional Scripts`. This enables you to track the checkout as well. Unfortunately we can't use Web Pixels here because they only run when the user consents. There is no way to add Pixels based on the user consent. This also means you unfortunately cannot track any checkout sub steps, just the conversion. But in most cases this should be fine.
 
 ## Klaviyo
 
@@ -123,7 +123,7 @@ window.dispatchEvent(new CustomEvent('ptupdate'));
 
 Trekkie is Shopify's own tracking engine and gets loaded as part of the `content_for_header` blackbox. We can thankfully still manipulate inline scripts using a [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver). Changing the type to `text/partytown` will prevent script execution and the script will instead be processed by Partytown. You need to rewire a couple more inline scripts as shown in `assets/trekkie-partytown.js`. Any script containing `ShopifyAnalytics` needs to get added to the Partytown instance and remain on the main page. Otherwise the site starts to throw errors.
 
-Using the standard integrations for [Google Analytics](https://help.shopify.com/en/manual/reports-and-analytics/google-analytics/google-analytics-setup) and [Facebook](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel) with "partytowned" Trekkie leads to the attached pixels also being loaded within Partytown. I haven't fully tested this method, so treat it with caution and confirm that the data is correctly being collected by the third partys vendors.
+Using the standard integrations for [Google Analytics](https://help.shopify.com/en/manual/reports-and-analytics/google-analytics/google-analytics-setup) and [Facebook](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel) with "partytowned" Trekkie leads to the attached pixels also being loaded within a Web Worker. I haven't fully tested this method, so treat it with caution and confirm that the data is correctly being collected by the third partys vendors.
 
 ## Testing Improvements With Lighthouse
 
@@ -147,3 +147,5 @@ With the setup you can easily switch between Partytown and conventional tracking
 ### A Word Of Caution
 
 Please note that this is not the intended way of tracking in Shopify OS 2.0. Anything used here can break at any time if Shopify decides to change the way Trekkie or Web Pixels work. In a production environment you need to have a dev watching over your site or Partytown might cause more harm than good. Any theme should have a "kill switch" to return to conventional tracking in case something breaks.
+
+Other than that: Have fun offloading your tracking scripts!
