@@ -1,0 +1,39 @@
+{% if first_time_accessed %}
+  <script type="text/javascript">
+    (function (w, d, s, l) {
+      w[l] = w[l] || [];
+      var u = 'https://your.matomo.com/';
+      w[l].push(['trackPageView']);
+      w[l].push(['disableCookies']);
+      w[l].push(['enableLinkTracking']);
+      w[l].push(['setTrackerUrl', u + 'matomo.php']);
+      w[l].push(['setSiteId', 'X']);
+      var f = d.getElementsByTagName(s)[0];
+      j = d.createElement(s);
+      j.async = true;
+      j.src = u + 'matomo.js';
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', '_paq');
+  </script>
+  <script>
+    {%  for line_item in checkout.line_items %}
+    {% capture tag_list %}{% for tag in line_item.product.tags limit:5 %}{{ tag }}{% if forloop.last == false %}::{% endif%}{% endfor %}{% endcapture %}
+    {% assign tag_array = tag_list | split: '::'%}
+    _paq.push(['addEcommerceItem',
+        {{ line_item.product_id }},
+        {{ line_item.title | json }},
+        {{ tag_array | json }},
+        {{ line_item.final_price | divided_by: 100 }},
+        {{ line_item.quantity }}
+    ]);
+    {% endfor %}
+    _paq.push(['trackEcommerceOrder',
+        {{ checkout.order_id }},
+        {{ checkout.total_price | divided_by: 100 }},
+        {{ checkout.subtotal_price | divided_by: 100 }},
+        {{ checkout.tax_price | divided_by: 100 }},
+        {{ checkout.shipping_price | divided_by: 100 }},
+        {{ checkout.discounts_amount | divided_by: 100 }}
+    ]);
+  </script>
+{% endif %}

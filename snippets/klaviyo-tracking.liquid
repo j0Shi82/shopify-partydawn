@@ -1,0 +1,113 @@
+<script
+  type="text/javascript"
+>
+  function startKl() {
+    const script = document.createElement('script');
+    script.async = true;
+    script.type = 'text/partytown';
+    script.src = 'https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=aBcdeF';
+    document.head.appendChild(script);
+
+    !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
+
+    {% if product %}
+    if (item == null) {
+      var _learnq = _learnq || [];
+      var item = {
+        Name: "{{ product.title }}",
+        ProductID: {{ product.id }},
+        Categories: {{ product.collections | map: 'title' | json }},
+        ImageURL: location.protocol + "{{ product.featured_image | image_url }}",
+        URL: "{{ shop.secure_url }}" + "{{ product.url }}",
+        Brand: "{{ product.vendor }}",
+        Price: "{{ product.price | money_with_currency }}",
+        CompareAtPrice: "{{ product.compare_at_price | money_with_currency }}"
+      };
+      _learnq.push(['track', 'Viewed Product', item]);
+      _learnq.push(['trackViewedItem', {
+        Title: item.Name,
+        ItemId: item.ProductID,
+        Categories: item.Categories,
+        ImageUrl: item.ImageURL,
+        Url: item.URL,
+        Metadata: {
+          Brand: item.Brand,
+          Price: item.Price,
+          CompareAtPrice: item.CompareAtPrice
+        }
+      }]);
+    }
+    window.addEventListener('load', function() {
+      var _learnq = window._learnq || [];
+      function addedToCart() {
+        fetch(`${window.location.origin}/cart.js`)
+        .then(res => res.clone().json().then(data => {
+          var cart = {
+            total_price: data.total_price/100,
+            $value: data.total_price/100,
+            total_discount: data.total_discount,
+            original_total_price: data.original_total_price/100,
+            items: data.items
+          }
+          if (item !== 'undefined') {
+            cart = Object.assign(cart, item)
+          }
+          if (klAjax) {
+              _learnq.push(['track', 'Added to Cart', cart]);
+              klAjax = false;
+            }
+        }))
+      };
+      (function (ns, fetch) {
+        ns.fetch = function() {
+          const response = fetch.apply(this, arguments);
+          response.then(res => {
+            if (`${window.location.origin}/cart/add.js`
+              .includes(res.url)) {
+                addedToCart()
+            }
+          });
+          return response
+        }
+      }(window, window.fetch));
+      var klAjax = true;
+      var atcButtons = document.querySelectorAll("form[action*='/cart/add'] button[type='submit']");
+      for (var i = 0; i < atcButtons.length; i++) {
+          atcButtons[i].addEventListener("click", function() {
+            if (klAjax) {
+              _learnq.push(['track', 'Added to Cart', item]);
+              klAjax = false;
+            }
+          })
+      }
+    });
+    {% endif %}
+
+    window.dispatchEvent(new CustomEvent('ptupdate'));
+  }
+
+  (async function () {
+    function waitForCustomerPrivacy() {
+      return new Promise(function (resolve) {
+        var interval = setInterval(function () {
+          if (window.Shopify && window.Shopify.customerPrivacy) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 100);
+      });
+    }
+
+    await waitForCustomerPrivacy();
+
+    if (window.Shopify.customerPrivacy.thirdPartyMarketingAllowed()) {
+      startKl()
+    } else {
+      document.addEventListener("visitorConsentCollected", function(event) {
+        if (event.detail.thirdPartyMarketingAllowed) {
+          startKl()
+        }
+      });
+    }
+  })();
+</script>

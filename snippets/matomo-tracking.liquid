@@ -1,0 +1,76 @@
+<script type="text/partytown">
+  (function (w, d, s, l) {
+    w[l] = w[l] || [];
+    var u = 'https://your.matomo.com/';
+    w[l].push(['trackPageView']);
+    w[l].push(['disableCookies']);
+    // w[l].push(['enableLinkTracking']);
+    // w[l].push(['enableJSErrorTracking']);
+    w[l].push(['setTrackerUrl', u + 'matomo.php']);
+    // w[l].push(['setCookieDomain', '*.'+Shopify.shop]);
+    // w[l].push(['setUserId', '{{ customer.id }}' | '{{ customer.email | json }}']);
+    w[l].push(['setSiteId', 'X']);
+    var f = d.getElementsByTagName(s)[0];
+    j = d.createElement(s);
+    j.async = true;
+    j.src = u + 'matomo.js';
+    f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', '_paq');
+</script>
+<script type="text/javascript">
+  {% if template == 'collection' %}
+    {% capture tag_list %}{% for tag in collection.all_tags limit:5 %}{{ tag }}{% if forloop.last == false %}::{% endif%}{% endfor %}{% endcapture %}
+    {% assign tag_array = tag_list | split: '::' %}
+    _paq.push(['setEcommerceView', false, false, {{ tag_array | json }} ]);
+  {% endif %}
+  {% if template == 'product' %}
+    {% capture tag_list %}{% for tag in product.tags limit:5 %}{{ tag }}{% if forloop.last == false %}::{% endif%}{% endfor %}{% endcapture %}
+    {% assign tag_array = tag_list | split: '::' %}
+    _paq.push(['setEcommerceView', {{ product.id }}, {{ product.title | json }}, {{ tag_array | json }},
+    {{ product.price | divided_by: 100 }}]);
+  {% endif %}
+  {% if template == 'cart' %}
+    {% for item in cart.items %}
+      {% capture tag_list %}{% for tag in item.product.tags limit:5 %}{{ tag }}{% if forloop.last == false %}::{% endif%}{% endfor %}{% endcapture %}
+      {% assign tag_array = tag_list | split: '::'%}
+      _paq.push(['addEcommerceItem',
+         {{ item.product_id }},
+         {{ item.title | json }},
+         {{ tag_array | json }},
+         {{ item.final_price | divided_by:100 }},
+         {{ item.quantity }}
+         ]);
+      {% endfor %}
+      _paq.push(['trackEcommerceCartUpdate', {{ cart.total_price | divided_by: 100 }}]);
+  {% endif %}
+</script>
+
+<script type="text/javascript">
+  var origFetch = window.fetch;
+  window.fetch = function() {
+    var args = [].slice.call(arguments);
+    var result = origFetch.apply(this, args);
+    result.then(function(response) {
+      if (response.url.indexOf(window.Shopify.shop + window.routes.cart_add_url ) !== -1) {
+        response.clone().json().then((data) => {
+          _paq.push(['addEcommerceItem',
+            data.sku, data.untranslated_product_title,
+            {{ tag_array | json }},
+            data.price / 100,
+            data.quantity
+            ]);
+        });
+      }
+
+      if (
+        response.url.indexOf(window.Shopify.shop + window.routes.cart_url + '.js' ) !== -1
+        || response.url.indexOf(window.Shopify.shop + window.routes.cart_change_url ) !== -1
+      ) {
+        response.clone().json().then((data) => {
+          _paq.push(['trackEcommerceCartUpdate', data.total_price / 100]);
+        });
+      }
+    });
+    return result;
+  };
+</script>
