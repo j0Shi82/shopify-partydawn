@@ -8,11 +8,13 @@ Currently included in this repo are four different ways of how to integrate Part
 - Matomo (working without consent)
 - Klaviyo (dynamically injected based on consent)
 - Trekkie (altered Shopify's own tracking to work with Partytown)
+  - Official Google Analytics 4 Integration
+  - Official Facebook Integration
 
 ## Usage
 
 - Clone the repo
-- Add your own account IDs to GTM, Matomo, and Klaviyo or delete the corresponding code snippets
+- Set up a Shopify Development store
 - `shopify theme dev --store=YOUR_STORE`
 - [Set up a partytown proxy worker and app proxy](https://github.com/edlaver/cloudflare-worker-partytown-shopify-app-proxy/tree/main)
   - Note: a skeleton app is fine for this because you really only need the proxy settings. [Using the CLI](https://shopify.dev/docs/apps/tools/cli#getting-started) is the easiest option
@@ -20,6 +22,7 @@ Currently included in this repo are four different ways of how to integrate Part
 - Add the contents of `backend/checkout/additional.liquid` to `Settings-> Checkout -> Order Status Page Additional Scripts`
 - Connect Google Analytics using the [official integration](https://help.shopify.com/en/manual/reports-and-analytics/google-analytics/google-analytics-setup)
 - Connect Facebook using the [official integration](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel)
+- Go to the `Theme Customizer -> Theme Settings -> Partydawn` and fill out the settings as needed
 
 ## Google Tag Manager
 
@@ -121,3 +124,7 @@ window.dispatchEvent(new CustomEvent('ptupdate'));
 Trekkie is Shopify's own tracking engine and gets loaded as part of the `content_for_header` blackbox. We can thankfully still manipulate inline scripts using a [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver). Changing the type to `text/partytown` will prevent script execution and the script will instead be processed by Partytown. You need to rewire a couple more inline scripts as shown in `assets/trekkie-partytown.js`. Any script containing `ShopifyAnalytics` needs to get added to the Partytown instance and remain on the main page. Otherwise the site starts to throw errors.
 
 Using the standard integrations for [Google Analytics](https://help.shopify.com/en/manual/reports-and-analytics/google-analytics/google-analytics-setup) and [Facebook](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel) with "partytowned" Trekkie leads to the attached pixels also being loaded within Partytown. I haven't fully tested this method, so treat it with caution and confirm that the data is correctly being collected by the third partys vendors.
+
+## Testing Improvements With Lighthouse
+
+With the setup you can easily switch between Partytown and conventional tracking. 

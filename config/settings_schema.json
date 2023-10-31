@@ -26,6 +26,12 @@
       },
       {
         "type": "checkbox",
+        "id": "partydawn_klaviyo_used",
+        "label": "Use Klaviyo",
+        "default": true
+      },
+      {
+        "type": "checkbox",
         "id": "partydawn_klaviyo_enabled",
         "label": "Load Klaviyo Through Partytown",
         "default": true
@@ -42,6 +48,12 @@
       },
       {
         "type": "checkbox",
+        "id": "partydawn_gtm_used",
+        "label": "Use Tag Manager",
+        "default": true
+      },
+      {
+        "type": "checkbox",
         "id": "partydawn_gtm_enabled",
         "label": "Load Tag Manager Through Partytown",
         "default": true
@@ -55,6 +67,12 @@
       {
         "type": "header",
         "content": "Matomo"
+      },
+      {
+        "type": "checkbox",
+        "id": "partydawn_matomo_used",
+        "label": "Use Matomo",
+        "default": true
       },
       {
         "type": "checkbox",

@@ -1,5 +1,5 @@
 {%- render 'global-partytown' -%}
-{%- if settings.partydawn_gtm_enabled -%}
+{%- if settings.partydawn_gtm_enabled and settings.partydawn_gtm_used -%}
   <script type="text/partytown">
     (function (w, d, s, l, i) {
       w[l] = w[l] || [];
@@ -13,8 +13,12 @@
     })(window, document, 'script', 'dataLayer', '{{ settings.partydawn_gtm_id }}');
   </script>
 {%- endif -%}
-{%- render 'matomo-tracking' -%}
-{%- render 'klaviyo-tracking' -%}
+{%- if settings.partydawn_matomo_used -%}
+  {%- render 'matomo-tracking' -%}
+{%- endif -%}
+{%- if settings.partydawn_klaviyo_used -%}
+  {%- render 'klaviyo-tracking' -%}
+{%- endif -%}
 <script type="text/javascript">
   function isSessionStorageAvailable() {
     var test = 'test';
@@ -27,7 +31,7 @@
     }
   }
 
-  {%- if settings.partydawn_gtm_enabled -%}
+  {%- if settings.partydawn_gtm_enabled and settings.partydawn_gtm_used -%}
   if (isSessionStorageAvailable()) {
     var inc = 0;
     window.setInterval(function () {
@@ -43,5 +47,6 @@
   if (isSessionStorageAvailable()) {
     sessionStorage.setItem('partydawn_gtm_id', '{{ settings.partydawn_gtm_id }}');
     sessionStorage.setItem('partydawn_gtm_enabled', {{ settings.partydawn_gtm_enabled }});
+    sessionStorage.setItem('partydawn_gtm_used', {{ settings.partydawn_gtm_used }});
   }
 </script>
