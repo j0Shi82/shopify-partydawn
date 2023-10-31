@@ -4,8 +4,10 @@
   function startKl() {
     const script = document.createElement('script');
     script.async = true;
+    {%- if settings.partydawn_klaviyo_enabled -%}
     script.type = 'text/partytown';
-    script.src = 'https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=SgGtYk';
+    {%- endif -%}
+    script.src = 'https://static.klaviyo.com/onsite/js/klaviyo.js?company_id={{ settings.partydawn_klaviyo_id }}';
     document.head.appendChild(script);
 
     !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
@@ -83,7 +85,9 @@
     });
     {% endif %}
 
+    {%- if settings.partydawn_klaviyo_enabled -%}
     window.dispatchEvent(new CustomEvent('ptupdate'));
+    {% endif %}
   }
 
   (async function () {

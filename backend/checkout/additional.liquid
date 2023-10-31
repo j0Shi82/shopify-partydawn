@@ -2,12 +2,12 @@
   <script type="text/javascript">
     (function (w, d, s, l) {
       w[l] = w[l] || [];
-      var u = 'https://matomo.uncnso.red/';
+      var u = '{{ settings.partydawn_matomo_url }}';
       w[l].push(['trackPageView']);
       w[l].push(['disableCookies']);
       w[l].push(['enableLinkTracking']);
       w[l].push(['setTrackerUrl', u + 'matomo.php']);
-      w[l].push(['setSiteId', '1']);
+      w[l].push(['setSiteId', '{{ settings.partydawn_matomo_site_id }}']);
       var f = d.getElementsByTagName(s)[0];
       j = d.createElement(s);
       j.async = true;

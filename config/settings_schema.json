@@ -8,6 +8,75 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "Partydawn",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Trekkie"
+      },
+      {
+        "type": "checkbox",
+        "id": "partydawn_trekkie_enabled",
+        "label": "Load Trekkie Through Partytown",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Klaviyo"
+      },
+      {
+        "type": "checkbox",
+        "id": "partydawn_klaviyo_enabled",
+        "label": "Load Klaviyo Through Partytown",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "partydawn_klaviyo_id",
+        "label": "Klaviyo Company ID",
+        "placeholder": "abcdef"
+      },
+      {
+        "type": "header",
+        "content": "Google Tag Manager"
+      },
+      {
+        "type": "checkbox",
+        "id": "partydawn_gtm_enabled",
+        "label": "Load Tag Manager Through Partytown",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "partydawn_gtm_id",
+        "label": "Tag Manager ID",
+        "placeholder": "GTM-XXXXXXX"
+      },
+      {
+        "type": "header",
+        "content": "Matomo"
+      },
+      {
+        "type": "checkbox",
+        "id": "partydawn_matomo_enabled",
+        "label": "Load Matomo Through Partytown",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "partydawn_matomo_url",
+        "label": "Matomo URL",
+        "placeholder": "https://your.matomo.url"
+      },
+      {
+        "type": "text",
+        "id": "partydawn_matomo_site_id",
+        "label": "Matomo Site Id",
+        "placeholder": "1"
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.logo.name",
     "settings": [
       {

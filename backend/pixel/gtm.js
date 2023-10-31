@@ -29,21 +29,36 @@ var sessionStorageAvailable = isSessionStorageAvailable();
 var localStorageAvailable = isLocalStorageAvailable();
 var isCheckout = onCheckoutPage();
 
-(async function (w, d, s, l, i) {
-  if (!sessionStorageAvailable || isCheckout) {
+(async function (w, d, s, l) {
+  let gtmId = null;
+  let partytownEnabled = false;
+  try {
+    gtmId = await browser.sessionStorage.getItem('partydawn_gtm_id');
+    partytownEnabled = await browser.sessionStorage.getItem('partydawn_gtm_enabled');
+  } catch (e) {
+    gtmId = null;
+    partytownEnabled = false;
+  }
+  if (!sessionStorageAvailable || isCheckout || partytownEnabled !== 'true') {
     w[l] = w[l] || [];
     w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
     var f = d.getElementsByTagName(s)[0],
       j = d.createElement(s),
       dl = l != 'dataLayer' ? '&l=' + l : '';
     j.async = true;
-    j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+    j.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtmId + dl;
     f.parentNode.insertBefore(j, f);
   }
-})(window, document, 'script', 'dataLayer', 'GTM-MRST3B5R');
+})(window, document, 'script', 'dataLayer');
 
 async function sendData(data) {
-  if (sessionStorageAvailable && !isCheckout) {
+  let partytownEnabled = false;
+  try {
+    partytownEnabled = await browser.sessionStorage.getItem('partydawn_gtm_enabled');
+  } catch (e) {
+    partytownEnabled = false;
+  }
+  if (sessionStorageAvailable && !isCheckout && partytownEnabled === 'true') {
     browser.sessionStorage.setItem(`pt_dl_` + inc++, JSON.stringify(data));
   } else {
     window.dataLayer.push(data);

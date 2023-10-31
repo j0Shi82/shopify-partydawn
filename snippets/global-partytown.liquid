@@ -3,13 +3,20 @@
     debug: true,
     lib: '/apps/partytown/lib/',
     forward: [
+      {%- if settings.partydawn_matomo_enabled -%}
       // matomo
       '_paq.push',
+      {%- endif -%}
+      {%- if settings.partydawn_klaviyo_enabled -%}
       // klayivo
       '_klOnsite.push',
       '_learnq.push',
+      {%- endif -%}
+      {%- if settings.partydawn_gtm_enabled -%}
       // gtm
       'dataLayer.push',
+      {%- endif -%}
+      {%- if settings.partydawn_trekkie_enabled -%}
       // trekkie
       'ShopifyAnalytics.lib.track',
       'trekkie.identify',
@@ -21,6 +28,7 @@
       'customDocumentWrite',
       'hasLoggedConversion',
       'setCookieIfConversion',
+      {%- endif -%}
     ],
     logCalls: true,
     logGetters: true,

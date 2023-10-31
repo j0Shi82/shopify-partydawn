@@ -1,5 +1,5 @@
 {%- render 'global-partytown' -%}
-<script type="text/partytown">
+<script type="{%- if settings.partydawn_gtm_enabled -%}text/partytown{%- else -%}text/javascript{%- endif -%}">
   (function (w, d, s, l, i) {
     w[l] = w[l] || [];
     w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
@@ -9,7 +9,7 @@
     j.async = true;
     j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
     f.parentNode.insertBefore(j, f);
-  })(window, document, 'script', 'dataLayer', 'GTM-MRST3B5R');
+  })(window, document, 'script', 'dataLayer', '{{ settings.partydawn_gtm_id }}');
 </script>
 {%- render 'matomo-tracking' -%}
 {%- render 'klaviyo-tracking' -%}
@@ -25,6 +25,7 @@
     }
   }
 
+  {%- if settings.partydawn_gtm_enabled -%}
   if (isSessionStorageAvailable()) {
     var inc = 0;
     window.setInterval(function () {
@@ -34,5 +35,11 @@
         inc++;
       }
     }, 1000);
+  }
+  {%- endif -%}
+
+  if (isSessionStorageAvailable()) {
+    sessionStorage.setItem('partydawn_gtm_id', '{{ settings.partydawn_gtm_id }}');
+    sessionStorage.setItem('partydawn_gtm_enabled', {{ settings.partydawn_gtm_enabled }});
   }
 </script>
