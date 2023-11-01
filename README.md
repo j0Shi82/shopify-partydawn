@@ -1,6 +1,6 @@
 # Partydawn
 
-Example of Shopify's [Dawn theme](https://github.com/Shopify/dawn) working with [Partytown](https://partytown.builder.io/).
+Example of Shopify's [Dawn theme](https://github.com/Shopify/dawn) working with [Partytown](https://partytown.builder.io/). Example site is up at https://partydawn.myshopify.com (password: partydawn).
 
 Currently included in this repo are four different ways of how to integrate Partytown:
 
