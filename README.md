@@ -14,7 +14,7 @@ Currently included in this repo are four different ways of how to integrate Part
 ## Usage
 
 - Clone the repo
-- Set up a Shopify development store with an app that manages cookie consent
+- Set up a Shopify development store with an app that manages cookie consent (the example uses Consentmo)
 - `shopify theme dev --store=YOUR_STORE`
 - [Set up a partytown proxy worker and app proxy](https://github.com/edlaver/cloudflare-worker-partytown-shopify-app-proxy/tree/main)
   - Note: a skeleton app is fine for this because you really only need the proxy settings. [Using the CLI](https://shopify.dev/docs/apps/tools/cli#getting-started) is the easiest option
@@ -23,6 +23,10 @@ Currently included in this repo are four different ways of how to integrate Part
 - Connect Google Analytics using the [official integration](https://help.shopify.com/en/manual/reports-and-analytics/google-analytics/google-analytics-setup)
 - Connect Facebook using the [official integration](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel)
 - Go to the `Theme Customizer -> Theme Settings -> Partydawn` and fill out the settings as needed
+
+### Manually Open the Consent
+
+When using Consentmo and want to test different settings with tracking, you can open your browser's developer console and invoke `showPreferences()`. It works differently with other cookie consent apps. I only mention this because adding a button to reopen consent is a premium feature within Consentmo and I was lazy enough not to add a button myself.
 
 ## Google Tag Manager
 
@@ -65,6 +69,8 @@ if (isSessionStorageAvailable()) {
 If sessionStorage is not available the Pixel installs the GTM conventionally. This is also done on checkout pages which can't be directly controlled.
 
 Web Pixel play nicely with the integrated consent. They follow the rules defined on `Sales Channels -> Online Store -> Preferences -> Customer Privacy`. Whenever it feels appropriate to hook into Shopify's customer events for tracking purposes, this is the way to go.
+
+You can certainly also use `window.postMessage` to build an event bridge between the Web Pixel (iframe) and the top frame. But I chose sessionStorage since it's directly supported by the Web Pixel API.
 
 ## Matomo
 

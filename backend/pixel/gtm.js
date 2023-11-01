@@ -9,17 +9,6 @@ function isSessionStorageAvailable() {
   }
 }
 
-function isLocalStorageAvailable() {
-  var test = 'test';
-  try {
-    browser.localStorage.setItem(test, test);
-    browser.localStorage.removeItem(test);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
 function onCheckoutPage() {
   return init.context.document.location.pathname.indexOf('/checkout') === 0;
 }
@@ -43,7 +32,6 @@ async function getItem(item) {
 
 var inc = 0;
 var sessionStorageAvailable = isSessionStorageAvailable();
-var localStorageAvailable = isLocalStorageAvailable();
 var isCheckout = onCheckoutPage();
 
 (async function (w, d, s, l) {
