@@ -12,10 +12,6 @@
       '_klOnsite.push',
       '_learnq.push',
       {%- endif -%}
-      {%- if settings.partydawn_gtm_enabled -%}
-      // gtm
-      'dataLayer.push',
-      {%- endif -%}
       {%- if settings.partydawn_trekkie_enabled -%}
       // trekkie
       'ShopifyAnalytics.lib.track',
@@ -38,6 +34,12 @@
     logSendBeaconRequests: true,
     logStackTraces: false,
   };
+
+  {%- if settings.partydawn_gtm_enabled -%}
+  if (!location.search.includes('gtm_debug')) {
+    window.partytown.forward.push('dataLayer.push');
+  }
+  {%- endif -%}
 
   window.partytown.resolveUrl = function (url, location, type) {
     if (type === 'script') {
