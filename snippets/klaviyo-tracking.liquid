@@ -90,6 +90,7 @@
         window.dispatchEvent(new CustomEvent('ptupdate'));
         document.removeEventListener('pt0', waitForPtInit);
     }
+    document.addEventListener('pt0', waitForPtInit);
     {% endif %}
   }
 
