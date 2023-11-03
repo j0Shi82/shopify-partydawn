@@ -14,7 +14,12 @@
       {%- endif -%}
       {%- if settings.partydawn_trekkie_enabled -%}
       // trekkie
+      'ShopifyAnalytics.lib.identify',
+      'ShopifyAnalytics.lib.page',
+      'ShopifyAnalytics.lib.ready',
       'ShopifyAnalytics.lib.track',
+      'ShopifyAnalytics.lib.trackForm',
+      'ShopifyAnalytics.lib.trackLink',
       'trekkie.identify',
       'trekkie.page',
       'trekkie.ready',

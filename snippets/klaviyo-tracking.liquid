@@ -86,7 +86,10 @@
     {% endif %}
 
     {%- if settings.partydawn_klaviyo_enabled -%}
-    window.dispatchEvent(new CustomEvent('ptupdate'));
+    const waitForPtInit = function () {
+        window.dispatchEvent(new CustomEvent('ptupdate'));
+        document.removeEventListener('pt0', waitForPtInit);
+    }
     {% endif %}
   }
 
