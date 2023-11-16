@@ -2,7 +2,7 @@
 
 Example of Shopify's [Dawn theme](https://github.com/Shopify/dawn) working with [Partytown](https://partytown.builder.io/). Example site is up at https://partydawn.myshopify.com (password: partydawn).
 
-Currently included in this repo are four different ways of how to integrate Partytown:
+Currently included in this repo are different ways of how to integrate Partytown:
 
 - GTM (through Shopify's Web Pixel)
 - Matomo (working without consent)
@@ -72,6 +72,10 @@ Web Pixel play nicely with the integrated consent. They follow the rules defined
 
 You can certainly also use `window.postMessage` to build an event bridge between the Web Pixel (iframe) and the top frame. But I chose sessionStorage since it's directly supported by the Web Pixel API.
 
+### Tagging Server
+
+You can test a server implementation by altering the tag manager URL in the theme settings `partydawn_gtm_server`. So far I've had issues with cookies not getting properly set from the server container and I'm not sure how to debug it.
+
 ## Matomo
 
 - `snippets/global-partytown.liquid`
@@ -130,6 +134,8 @@ window.dispatchEvent(new CustomEvent('ptupdate'));
 Trekkie is Shopify's own tracking engine and gets loaded as part of the `content_for_header` blackbox. We can thankfully still manipulate inline scripts using a [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver). Changing the type to `text/partytown` will prevent script execution and the script will instead be processed by Partytown. You need to rewire a couple more inline scripts as shown in `assets/trekkie-partytown.js`. Any script containing `ShopifyAnalytics` needs to get added to the Partytown instance and remain on the main page. Otherwise the site starts to throw errors.
 
 Using the standard integrations for [Google Analytics](https://help.shopify.com/en/manual/reports-and-analytics/google-analytics/google-analytics-setup) and [Facebook](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel) with "partytowned" Trekkie leads to the attached pixels also being loaded within a Web Worker. I haven't fully tested this method, so treat it with caution and confirm that the data is correctly being collected by the third partys vendors.
+
+You can also block trekkie using the `partydawn_trekkie_disabled` theme setting to test other Facebook and GA4 implementations (like GTM/SGTM).
 
 ## Testing Improvements With Lighthouse
 
