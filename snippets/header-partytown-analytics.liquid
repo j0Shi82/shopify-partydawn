@@ -9,7 +9,7 @@
         dl = l != 'dataLayer' ? '&l=' + l : '';
       j.async = true;
       j.type = location.search.includes('gtm_debug') ? 'text/javascript' : 'text/partytown';
-      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      j.src = '{{ settings.partydawn_gtm_server }}/gtm.js?id=' + i + dl;
       f.parentNode.insertBefore(j, f);
     })(window, document, 'script', 'dataLayer', '{{ settings.partydawn_gtm_id }}');
   </script>
@@ -47,6 +47,7 @@
 
   if (isSessionStorageAvailable()) {
     sessionStorage.setItem('partydawn_gtm_id', '{{ settings.partydawn_gtm_id }}');
+    sessionStorage.setItem('partydawn_gtm_server', '{{ settings.partydawn_gtm_server }}');
     sessionStorage.setItem('partydawn_gtm_enabled', {{ settings.partydawn_gtm_enabled }});
     sessionStorage.setItem('partydawn_gtm_used', {{ settings.partydawn_gtm_used }});
   }

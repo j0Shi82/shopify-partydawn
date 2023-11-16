@@ -68,6 +68,13 @@
       },
       {
         "type": "text",
+        "id": "partydawn_gtm_server",
+        "label": "Tag Manager Server URL",
+        "placeholder": "https://www.googletagmanager.com",
+        "default": "https://www.googletagmanager.com"
+      },
+      {
+        "type": "text",
         "id": "partydawn_gtm_id",
         "label": "Tag Manager ID",
         "placeholder": "GTM-XXXXXXX"

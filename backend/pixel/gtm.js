@@ -1,3 +1,5 @@
+window.dataLayer = window.dataLayer || [];
+
 function isSessionStorageAvailable() {
   var test = 'test';
   try {
@@ -17,6 +19,7 @@ const state = {
   partydawn_gtm_id: null,
   partydawn_gtm_enabled: null,
   partydawn_gtm_used: null,
+  partydawn_gtm_server: null,
 };
 
 async function getItem(item) {
@@ -38,6 +41,7 @@ var isCheckout = onCheckoutPage();
   gtmId = await getItem('partydawn_gtm_id');
   partytownEnabled = await getItem('partydawn_gtm_enabled');
   gtmEnabled = await getItem('partydawn_gtm_used');
+  gtmServer = await getItem('partydawn_gtm_server');
 
   if (!gtmId || gtmEnabled !== 'true') return;
 
@@ -48,7 +52,7 @@ var isCheckout = onCheckoutPage();
       j = d.createElement(s),
       dl = l != 'dataLayer' ? '&l=' + l : '';
     j.async = true;
-    j.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtmId + dl;
+    j.src = gtmServer + '/gtm.js?id=' + gtmId + dl;
     f.parentNode.insertBefore(j, f);
   }
 })(window, document, 'script', 'dataLayer');
