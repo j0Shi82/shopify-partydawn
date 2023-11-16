@@ -6,13 +6,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
-    {%- if settings.partydawn_trekkie_disabled -%}
-      <script type="text/javascript">
-        window.Partydawn = window.Partydawn || {};
-        window.Partydawn.settings = window.Partydawn.settings || {};
-        window.Partydawn.settings.blockTrekkie = {{ settings.partydawn_trekkie_disabled | json }};
-      </script>
-    {%- endif -%}
+    <script type="text/javascript">
+      window.Partydawn = window.Partydawn || {};
+      window.Partydawn.settings = window.Partydawn.settings || {};
+      window.Partydawn.settings.blockTrekkie = {{ settings.partydawn_trekkie_disabled | json }};
+    </script>
     {%- if settings.partydawn_trekkie_enabled or settings.partydawn_trekkie_disabled -%}
       <script src="{{ 'trekkie-partytown.js' | asset_url }}"></script>
     {%- endif -%}
