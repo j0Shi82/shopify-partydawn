@@ -21,7 +21,7 @@ function beforeScriptExecuteListener(evt) {
               !addedNode.getAttribute('src') &&
               addedNode.classList.contains('analytics')
             ) {
-              addedNode.type = 'text/partytown';
+              addedNode.type = window.Partydawn.settings.blockTrekkie ? 'text/blocked' : 'text/partytown';
               addedNode.addEventListener('beforescriptexecute', beforeScriptExecuteListener);
             }
 
@@ -40,7 +40,7 @@ function beforeScriptExecuteListener(evt) {
               newScript.text = addedNode.textContent;
               firstScript.parentNode.insertBefore(newScript, firstScript);
 
-              addedNode.type = 'text/partytown';
+              addedNode.type = window.Partydawn.settings.blockTrekkie ? 'text/blocked' : 'text/partytown';
               addedNode.addEventListener('beforescriptexecute', beforeScriptExecuteListener);
             }
           }

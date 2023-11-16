@@ -12,7 +12,7 @@
       '_klOnsite.push',
       '_learnq.push',
       {%- endif -%}
-      {%- if settings.partydawn_trekkie_enabled -%}
+      {%- if settings.partydawn_trekkie_enabled and settings.partydawn_trekkie_disabled == false -%}
       // trekkie
       'ShopifyAnalytics.lib.identify',
       'ShopifyAnalytics.lib.page',

@@ -18,7 +18,15 @@
         "type": "checkbox",
         "id": "partydawn_trekkie_enabled",
         "label": "Load Trekkie Through Partytown",
+        "info": "Services: GA4, Facebook",
         "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "partydawn_trekkie_disabled",
+        "label": "Block Trekkie",
+        "info": "Can be used to load GA4 and Facebook from other sources like GTM",
+        "default": false
       },
       {
         "type": "header",
