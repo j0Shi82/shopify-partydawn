@@ -74,7 +74,7 @@ You can certainly also use `window.postMessage` to build an event bridge between
 
 ### Tagging Server
 
-You can test a server implementation by altering the tag manager URL in the theme settings `partydawn_gtm_server`. So far I've had issues with cookies not getting properly set from the server container and I'm not sure how to debug it.
+You can test a server implementation by altering the tag manager URL in the theme settings `partydawn_gtm_server`. It's impossible to create first-party cookies from the server with a dev store setup though. You cannot solve cross-domain. I tried a app proxies and use `https://partydawn.myshopify.com/a/sgtm` as the server url, but routing the request through Shopify's app logic [eats all cookies alive](https://shopify.dev/docs/apps/online-store/app-proxies#handling-proxy-requests). And because you cannot attach a domain to a dev shop you're out of options. So there's unfortunately no way to test whether cookies get correctly set with sgtm working inside partytown.
 
 ## Matomo
 

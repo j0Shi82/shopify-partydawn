@@ -17,7 +17,7 @@ function onCheckoutPage() {
 
 const state = {
   partydawn_gtm_id: null,
-  partydawn_gtm_enabled: null,
+  partydawn_gtm_load_in_pixel: null,
   partydawn_gtm_used: null,
   partydawn_gtm_server: null,
 };
@@ -38,14 +38,13 @@ var sessionStorageAvailable = isSessionStorageAvailable();
 var isCheckout = onCheckoutPage();
 
 (async function (w, d, s, l) {
-  gtmId = await getItem('partydawn_gtm_id');
-  partytownEnabled = await getItem('partydawn_gtm_enabled');
-  gtmEnabled = await getItem('partydawn_gtm_used');
-  gtmServer = await getItem('partydawn_gtm_server');
+  const gtmId = await getItem('partydawn_gtm_id');
+  const gtmEnabled = (await getItem('partydawn_gtm_used')) && (await getItem('partydawn_gtm_load_in_pixel'));
+  const gtmServer = await getItem('partydawn_gtm_server');
 
   if (!gtmId || gtmEnabled !== 'true') return;
 
-  if (!sessionStorageAvailable || isCheckout || partytownEnabled !== 'true') {
+  if (!sessionStorageAvailable || isCheckout) {
     w[l] = w[l] || [];
     w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
     var f = d.getElementsByTagName(s)[0],
@@ -58,12 +57,12 @@ var isCheckout = onCheckoutPage();
 })(window, document, 'script', 'dataLayer');
 
 async function sendData(data) {
-  partytownEnabled = await getItem('partydawn_gtm_enabled');
-  gtmEnabled = await getItem('partydawn_gtm_used');
+  const gtmEnabled = await getItem('partydawn_gtm_used');
+  const gtmLoadInPixel = await getItem('partydawn_gtm_load_in_pixel');
 
   if (gtmEnabled !== 'true') return;
 
-  if (sessionStorageAvailable && !isCheckout && partytownEnabled === 'true') {
+  if (sessionStorageAvailable && !isCheckout && gtmLoadInPixel === 'false') {
     browser.sessionStorage.setItem(`pt_dl_` + inc++, JSON.stringify(data));
   } else {
     window.dataLayer.push(data);

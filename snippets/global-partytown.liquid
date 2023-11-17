@@ -40,7 +40,7 @@
     logStackTraces: false,
   };
 
-  {%- if settings.partydawn_gtm_enabled -%}
+  {%- if settings.partydawn_gtm_mode == 'pt' -%}
   if (!location.search.includes('gtm_debug')) {
     window.partytown.forward.push('dataLayer.push');
   }

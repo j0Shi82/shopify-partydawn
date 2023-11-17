@@ -58,13 +58,27 @@
         "type": "checkbox",
         "id": "partydawn_gtm_used",
         "label": "Use Tag Manager",
+        "info": "Services: GA4, Facebook",
         "default": true
       },
       {
-        "type": "checkbox",
-        "id": "partydawn_gtm_enabled",
-        "label": "Load Tag Manager Through Partytown",
-        "default": true
+        "type": "radio",
+        "id": "partydawn_gtm_mode",
+        "label": "Tag Manager Loading Mode",
+        "options": [
+          {
+            "value": "pt",
+            "label": "Partytown"
+          },
+          {
+            "value": "wpm",
+            "label": "Web Pixel"
+          },
+          {
+            "value": "main",
+            "label": "Main Thread"
+          }
+        ]
       },
       {
         "type": "text",

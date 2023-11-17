@@ -1,5 +1,5 @@
 {%- render 'global-partytown' -%}
-{%- if settings.partydawn_gtm_enabled and settings.partydawn_gtm_used -%}
+{%- if settings.partydawn_gtm_mode != 'wpm' and settings.partydawn_gtm_used -%}
   <script type="text/javascript">
     (function (w, d, s, l, i) {
       w[l] = w[l] || [];
@@ -8,7 +8,7 @@
         j = d.createElement(s),
         dl = l != 'dataLayer' ? '&l=' + l : '';
       j.async = true;
-      j.type = location.search.includes('gtm_debug') ? 'text/javascript' : 'text/partytown';
+      j.type = location.search.includes('gtm_debug') || {{ settings.partydawn_gtm_mode | json }} === 'main' ? 'text/javascript' : 'text/partytown';
       j.src = '{{ settings.partydawn_gtm_server }}/gtm.js?id=' + i + dl;
       f.parentNode.insertBefore(j, f);
     })(window, document, 'script', 'dataLayer', '{{ settings.partydawn_gtm_id }}');
@@ -32,7 +32,9 @@
     }
   }
 
-  {%- if settings.partydawn_gtm_enabled and settings.partydawn_gtm_used -%}
+  console.log({{ settings.partydawn_gtm_mode | json }});
+  console.log({{ settings.partydawn_gtm_used | json }});
+  {%- if settings.partydawn_gtm_mode != 'wpm' and settings.partydawn_gtm_used -%}
   if (isSessionStorageAvailable()) {
     var inc = 0;
     window.setInterval(function () {
@@ -48,7 +50,7 @@
   if (isSessionStorageAvailable()) {
     sessionStorage.setItem('partydawn_gtm_id', '{{ settings.partydawn_gtm_id }}');
     sessionStorage.setItem('partydawn_gtm_server', '{{ settings.partydawn_gtm_server }}');
-    sessionStorage.setItem('partydawn_gtm_enabled', {{ settings.partydawn_gtm_enabled }});
+    sessionStorage.setItem('partydawn_gtm_load_in_pixel', {{ settings.partydawn_gtm_mode | json }} === 'wpm');
     sessionStorage.setItem('partydawn_gtm_used', {{ settings.partydawn_gtm_used }});
   }
 </script>
