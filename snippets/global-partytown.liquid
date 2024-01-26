@@ -47,7 +47,11 @@
   {%- endif -%}
 
   window.partytown.resolveUrl = function (url, location, type) {
+<<<<<<< HEAD
     if (type === 'script' && url.host.indexOf('klaviyo.com') === -1 && !url.searchParams.has('url')) {
+=======
+    if (type === 'script' && url.host.indexOf('klaviyo.com') === -1 && !url.searchParams.get('url')) {
+>>>>>>> 588f74b2b0b0d755bece94ab42554821c490db66
       const proxyUrl = new URL('/apps/partytown/proxy', location.href);
       proxyUrl.searchParams.append('url', url.href);
       console.log(url.href, "=>", proxyUrl.href);
