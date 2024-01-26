@@ -47,16 +47,17 @@
   {%- endif -%}
 
   window.partytown.resolveUrl = function (url, location, type) {
-    if (type === 'script' && url.host.indexOf('klaviyo.com') === -1) {
+    if (type === 'script' && url.host.indexOf('klaviyo.com') === -1 && !url.searchParams.has('url')) {
       const proxyUrl = new URL('/apps/partytown/proxy', location.href);
       proxyUrl.searchParams.append('url', url.href);
+      console.log(url.href, "=>", proxyUrl.href);
       return proxyUrl;
     }
     return url;
   };
 </script>
 <script>
-  /* Partytown 0.8.1 - MIT builder.io */
+  /* Partytown 0.8.2 - MIT builder.io */
   !(function (t, e, n, i, o, r, a, s, d, c, l, p) {
     function u() {
       p ||
@@ -89,7 +90,7 @@
           (c.style.border = '0'),
           (c.style.visibility = 'hidden'),
           c.setAttribute('aria-hidden', !0)),
-        (c.src = a + 'partytown-' + (t ? 'atomics.js?v=0.8.1' : 'sandbox-sw.html?' + Date.now())),
+        (c.src = a + 'partytown-' + (t ? 'atomics.js?v=0.8.2' : 'sandbox-sw.html?' + Date.now())),
         e.querySelector(r.sandboxParent || 'body').appendChild(c);
     }
     function f(n, o) {

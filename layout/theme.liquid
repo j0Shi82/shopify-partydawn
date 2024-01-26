@@ -10,6 +10,7 @@
       window.Partydawn = window.Partydawn || {};
       window.Partydawn.settings = window.Partydawn.settings || {};
       window.Partydawn.settings.blockTrekkie = {{ settings.partydawn_trekkie_disabled | json }};
+      window.Partydawn.settings.blockTrekkieFbPixel = {{ settings.partydawn_trekkie_fb_disabled | json }};
     </script>
     {%- if settings.partydawn_trekkie_enabled or settings.partydawn_trekkie_disabled -%}
       <script src="{{ 'trekkie-partytown.js' | asset_url }}"></script>

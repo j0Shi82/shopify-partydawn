@@ -22,6 +22,12 @@ function beforeScriptExecuteListener(evt) {
               addedNode.classList.contains('analytics')
             ) {
               addedNode.type = window.Partydawn.settings.blockTrekkie ? 'text/blocked' : 'text/partytown';
+              if (window.Partydawn.settings.blockTrekkieFbPixel) {
+                addedNode.innerHTML = addedNode.innerHTML.replace(
+                  /,"Facebook Pixel":{"pixelIds":\["\d+"\],"agent":"[a-zA-Z0-9\.-_]+"}/,
+                  ''
+                );
+              }
               addedNode.addEventListener('beforescriptexecute', beforeScriptExecuteListener);
             }
 
