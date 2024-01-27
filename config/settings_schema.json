@@ -23,6 +23,13 @@
       },
       {
         "type": "checkbox",
+        "id": "partydawn_trekkie_fb_disabled",
+        "label": "Block Trekkie Facebook Pixel",
+        "info": "Enables you to use the official Facebook integration without loading the pixel.",
+        "default": false
+      },
+      {
+        "type": "checkbox",
         "id": "partydawn_trekkie_disabled",
         "label": "Block Trekkie",
         "info": "Can be used to load GA4 and Facebook from other sources like GTM",
