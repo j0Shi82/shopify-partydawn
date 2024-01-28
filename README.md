@@ -77,13 +77,15 @@ You can certainly also use `window.postMessage` to build an event bridge between
 You can test a server implementation by altering the tag manager URL in the theme settings `partydawn_gtm_server`. It's impossible to create first-party cookies from the server with a dev store setup though. You cannot solve cross-domain. I tried a app proxies and use `https://partydawn.myshopify.com/a/sgtm` as the server url, but routing the request through Shopify's app logic [eats all cookies alive](https://shopify.dev/docs/apps/online-store/app-proxies#handling-proxy-requests). And because you cannot attach a domain to a dev shop you're out of options. So there's unfortunately no way to test whether cookies get correctly set with sgtm working inside partytown.
 
 **There's no cookie banner on the test site so be warned...**
+
 I've set up a [small test site](https://www.partydawn.top/) that uses a subdomain for the tagging server. While testing, I noticed that cookies from the tagging server that are served through HTTP `Set-Cookie` headers are not set properly. I realized that for whatever reason even when setting `withCredentials`, `XMLHttpRequest` is unable to send or set cookies inside Web Workers. `fetch` doesn't suffer from the same issue.
 
 I've posted the issue here: https://github.com/BuilderIO/partytown/issues/501
 
-Since it might be a plaftorm issue the only real way around this seems to be using a Shim that implements the original `XMLHttpRequest` API, but uses fetch under the hood. https://github.com/apple502j/xhr-shim/blob/main/src/index.js is a nice starting point, but you also need to add `onprogress` and `onreadystatechange` for most scripts to work. When using `SGTM + PT + XHR_REWRITE` on the test site, the underlying Cloudflare URL Proxy automatically applies a shim and the cookies are correctly set.
+Since it might be a platform issue, the only real way around this seems to be using a shim that implements the original `XMLHttpRequest` API, but uses fetch under the hood. https://github.com/apple502j/xhr-shim/blob/main/src/index.js is a nice starting point, but you also at least need to add `onprogress` and `onreadystatechange` for most scripts to work. When using [SGTM + PT + XHR_REWRITE](https://www.partydawn.top/?sgtm&pt&xhrfetch) on the test site, the underlying Cloudflare URL Proxy automatically applies a shim and the cookies are correctly set.
 
-This is a bit of a pain and I'm hoping to be able to provide a fix within Partytown in the future. Again: This is only an issue if workign with a tagging server or relying on anything else that sets cookies through the `Set-Cookie` HTTP header. All `document.cookie` from `text/partytown` work just fine.
+This is a bit of a pain and I'm hoping to be able to provide a fix within Partytown in the future. Again: This is only an issue if working with a tagging server or relying on anything else that sets cookies through the `Set-Cookie` HTTP header. All `document.cookie` from `text/partytown` work just fine.
+
 **There's no cookie banner on the test site so be warned...**
 
 ## Matomo
