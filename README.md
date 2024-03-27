@@ -1,175 +1,99 @@
-# Partydawn
+# Dawn
 
-Example of Shopify's [Dawn theme](https://github.com/Shopify/dawn) working with [Partytown](https://partytown.builder.io/). Example site is up at https://partydawn.myshopify.com (password: partydawn).
+[![Build status](https://github.com/shopify/dawn/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Shopify/dawn/actions/workflows/ci.yml?query=branch%3Amain)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?color=informational)](/.github/CONTRIBUTING.md)
 
-Currently included in this repo are different ways of how to integrate Partytown:
+[Getting started](#getting-started) |
+[Staying up to date with Dawn changes](#staying-up-to-date-with-dawn-changes) |
+[Developer tools](#developer-tools) |
+[Contributing](#contributing) |
+[Code of conduct](#code-of-conduct) |
+[Theme Store submission](#theme-store-submission) |
+[License](#license)
 
-- GTM (through Shopify's Web Pixel)
-- Matomo (working without consent)
-- Klaviyo (dynamically injected based on consent)
-- Trekkie (altered Shopify's own tracking to work with Partytown)
-  - Official Google Analytics 4 Integration
-  - Official Facebook Integration
+Dawn represents a HTML-first, JavaScript-only-as-needed approach to theme development. It's Shopify's first source available theme with performance, flexibility, and [Online Store 2.0 features](https://www.shopify.com/partners/blog/shopify-online-store) built-in and acts as a reference for building Shopify themes.
 
-## Usage
+* **Web-native in its purest form:** Themes run on the [evergreen web](https://www.w3.org/2001/tag/doc/evergreen-web/). We leverage the latest web browsers to their fullest, while maintaining support for the older ones through progressive enhancement—not polyfills.
+* **Lean, fast, and reliable:** Functionality and design defaults to “no” until it meets this requirement. Code ships on quality. Themes must be built with purpose. They shouldn’t support each and every feature in Shopify.
+* **Server-rendered:** HTML must be rendered by Shopify servers using Liquid. Business logic and platform primitives such as translations and money formatting don’t belong on the client. Async and on-demand rendering of parts of the page is OK, but we do it sparingly as a progressive enhancement.
+* **Functional, not pixel-perfect:** The Web doesn’t require each page to be rendered pixel-perfect by each browser engine. Using semantic markup, progressive enhancement, and clever design, we ensure that themes remain functional regardless of the browser.
 
-- Clone the repo
-- Set up a Shopify development store with an app that manages cookie consent (the example uses Consentmo)
-- `shopify theme dev --store=YOUR_STORE`
-- [Set up a partytown proxy worker and app proxy](https://github.com/edlaver/cloudflare-worker-partytown-shopify-app-proxy/tree/main)
-  - Note: a skeleton app is fine for this because you really only need the proxy settings. [Using the CLI](https://shopify.dev/docs/apps/tools/cli#getting-started) is the easiest option
-- Create a new Custom Web Pixel with the contents of `backend/pixel/gtm.js`
-- Add the contents of `backend/checkout/additional.liquid` to `Settings-> Checkout -> Order Status Page Additional Scripts`
-- Connect Google Analytics using the [official integration](https://help.shopify.com/en/manual/reports-and-analytics/google-analytics/google-analytics-setup)
-- Connect Facebook using the [official integration](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel)
-- Go to the `Theme Customizer -> Theme Settings -> Partydawn` and fill out the settings as needed
+You can find a more detailed version of our theme code principles in the [contribution guide](https://github.com/Shopify/dawn/blob/main/.github/CONTRIBUTING.md#theme-code-principles).
 
-### Manually Open the Consent
+## Getting started
+We recommend using Dawn as a starting point for theme development. [Learn more on Shopify.dev](https://shopify.dev/themes/getting-started/create).
 
-When using Consentmo and want to test different settings with tracking, you can open your browser's developer console and invoke `showPreferences()`. It works differently with other cookie consent apps. I only mention this because adding a button to reopen consent is a premium feature within Consentmo and I was lazy enough not to add a button myself.
+> If you're building a theme for the Shopify Theme Store, then you can use Dawn as a starting point. However, the theme that you submit needs to be [substantively different from Dawn](https://shopify.dev/themes/store/requirements#uniqueness) so that it provides added value for merchants. Learn about the [ways that you can use Dawn](https://shopify.dev/themes/tools/dawn#ways-to-use-dawn).
 
-## Google Tag Manager
+Please note that the main branch may include code for features not yet released. The "stable" version of Dawn is available in the theme store.
 
-- `snippets/header-partytown-analytics.liquid`
-- `snippets/global-partytown.liquid`
-- `backend/pixel/gtm.js`
+## Staying up to date with Dawn changes
 
-Shopify uses [Web Pixels](https://shopify.dev/docs/apps/marketing/pixels) to hook into [customer events](https://shopify.dev/docs/api/web-pixels-api/standard-events). Although Web Pixels are JavaScript snippets, you can't get Partytown to work because it's a sandboxed environment in an iframe without access to the top frame. To install the Tag Manager inside the Pixel I basically followed the [official documentation](https://help.shopify.com/en/manual/promoting-marketing/pixels/custom-pixels/gtm-tutorial), with the exception that we don't want to load the GTM script directly in the sandbox.
+Say you're building a new theme off Dawn but you still want to be able to pull in the latest changes, you can add a remote `upstream` pointing to this Dawn repository.
 
-Instead we inject the script as `text/partytown` in the regular page and create an event bridge between the Pixel and the main page using the sessionStorage that is available in the Pixel. We push events in the storage, pick them up on the main page, and forward them to Partytown:
-
-```js
-// inside the Pixel
-browser.sessionStorage.setItem(`pt_dl_` + inc++, JSON.stringify(data));
-
-// on the main page
-function isSessionStorageAvailable() {
-  var test = 'test';
-  try {
-    sessionStorage.setItem(test, test);
-    sessionStorage.removeItem(test);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-if (isSessionStorageAvailable()) {
-  var inc = 0;
-  window.setInterval(function () {
-    while (sessionStorage.getItem('pt_dl_' + inc) !== null) {
-      window.dataLayer.push(JSON.parse(sessionStorage.getItem('pt_dl_' + inc)));
-      sessionStorage.removeItem('pt_dl_' + inc);
-      inc++;
-    }
-  }, 1000);
-}
+1. Navigate to your local theme folder.
+2. Verify the list of remotes and validate that you have both an `origin` and `upstream`:
+```sh
+git remote -v
+```
+3. If you don't see an `upstream`, you can add one that points to Shopify's Dawn repository:
+```sh
+git remote add upstream https://github.com/Shopify/dawn.git
+```
+4. Pull in the latest Dawn changes into your repository:
+```sh
+git fetch upstream
+git pull upstream main
 ```
 
-If sessionStorage is not available the Pixel installs the GTM conventionally. This is also done on checkout pages which can't be directly controlled.
+## Developer tools
 
-Web Pixel play nicely with the integrated consent. They follow the rules defined on `Sales Channels -> Online Store -> Preferences -> Customer Privacy`. Whenever it feels appropriate to hook into Shopify's customer events for tracking purposes, this is the way to go.
+There are a number of really useful tools that the Shopify Themes team uses during development. Dawn is already set up to work with these tools.
 
-You can certainly also use `window.postMessage` to build an event bridge between the Web Pixel (iframe) and the top frame. But I chose sessionStorage since it's directly supported by the Web Pixel API.
+### Shopify CLI
 
-### Tagging Server
+[Shopify CLI](https://github.com/Shopify/shopify-cli) helps you build Shopify themes faster and is used to automate and enhance your local development workflow. It comes bundled with a suite of commands for developing Shopify themes—everything from working with themes on a Shopify store (e.g. creating, publishing, deleting themes) or launching a development server for local theme development.
 
-You can test a server implementation by altering the tag manager URL in the theme settings `partydawn_gtm_server`. It's impossible to create first-party cookies from the server with a dev store setup though. You cannot solve cross-domain. I tried a app proxies and use `https://partydawn.myshopify.com/a/sgtm` as the server url, but routing the request through Shopify's app logic [eats all cookies alive](https://shopify.dev/docs/apps/online-store/app-proxies#handling-proxy-requests). And because you cannot attach a domain to a dev shop you're out of options. So there's unfortunately no way to test whether cookies get correctly set with sgtm working inside partytown.
+You can follow this [quick start guide for theme developers](https://shopify.dev/docs/themes/tools/cli) to get started.
 
-**There's no cookie banner on the test site so be warned...**
+### Theme Check
 
-I've set up a [small test site](https://www.partydawn.top/) that uses a subdomain for the tagging server. While testing, I noticed that cookies from the tagging server that are served through HTTP `Set-Cookie` headers are not set properly. I realized that for whatever reason even when setting `withCredentials`, `XMLHttpRequest` is unable to send or set cookies inside Web Workers. `fetch` doesn't suffer from the same issue.
+We recommend using [Theme Check](https://github.com/shopify/theme-check) as a way to validate and lint your Shopify themes.
 
-I've posted the issue here: https://github.com/BuilderIO/partytown/issues/501
+We've added Theme Check to Dawn's [list of VS Code extensions](/.vscode/extensions.json) so if you're using Visual Studio Code as your code editor of choice, you'll be prompted to install the [Theme Check VS Code](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) extension upon opening VS Code after you've forked and cloned Dawn.
 
-Since it might be a platform issue, the only real way around this seems to be using a shim that implements the original `XMLHttpRequest` API, but uses fetch under the hood. https://github.com/apple502j/xhr-shim/blob/main/src/index.js is a nice starting point, but you also at least need to add `onprogress` and `onreadystatechange` for most scripts to work. When using [SGTM + PT + XHR_REWRITE](https://www.partydawn.top/?sgtm&pt&xhrfetch) on the test site, the underlying Cloudflare URL Proxy automatically applies a shim and the cookies are correctly set.
+You can also run it from a terminal with the following Shopify CLI command:
 
-This is a bit of a pain and I'm hoping to be able to provide a fix within Partytown in the future. Again: This is only an issue if working with a tagging server or relying on anything else that sets cookies through the `Set-Cookie` HTTP header. All `document.cookie` from `text/partytown` work just fine.
-
-**There's no cookie banner on the test site so be warned...**
-
-## Matomo
-
-- `snippets/global-partytown.liquid`
-- `snippets/matomo-tracking.liquid`
-- `backend/checkout/additional.liquid`
-
-There might be tracking that you can run regardless of the consent. You can just add it as `text/partytown` and Partytown will pick it up. Please note that you need to add additional tracking inside `Settings-> Checkout -> Order Status Page Additional Scripts`. This enables you to track the checkout as well. Unfortunately we can't use Web Pixels here because they only run when the user consents. There is no way to add Pixels based on the user consent. This also means you unfortunately cannot track any checkout sub steps, just the conversion. But in most cases this should be fine.
-
-## Klaviyo
-
-- `snippets/global-partytown.liquid`
-- `snippets/klaviyo-tracking.liquid`
-
-There's also tracking that works outside Shopify's consumer events, but needs to respect user consent. Klaviyo is such an example. It's already [known](https://partytown.builder.io/common-services) to work with Partytown and can be integrated easily. You just have to use the [Customer Privacy API](https://shopify.dev/docs/api/consent-tracking) that Shopify offers.
-
-```js
-(async function () {
-  function waitForCustomerPrivacy() {
-    return new Promise(function (resolve) {
-      var interval = setInterval(function () {
-        if (window.Shopify && window.Shopify.customerPrivacy) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 100);
-    });
-  }
-
-  await waitForCustomerPrivacy();
-
-  if (window.Shopify.customerPrivacy.thirdPartyMarketingAllowed()) {
-    startKl();
-  } else {
-    document.addEventListener('visitorConsentCollected', function (event) {
-      if (event.detail.thirdPartyMarketingAllowed) {
-        startKl();
-      }
-    });
-  }
-})();
+```bash
+shopify theme check
 ```
 
-Note that the functions expects another script to init the API as described [here](https://shopify.dev/docs/api/consent-tracking#loading-the-customer-privacy-api), but you can also do this yourself. Usually the consent integration / app takes care of it. For Klaviyo you need to follow the official [integration guide](https://help.klaviyo.com/hc/en-us/articles/115005080407), but don't use the App Embed.
+### Continuous Integration
 
-Also remember to [inform Partytown](https://partytown.builder.io/partytown-scripts#dynamically-appending-scripts) that Klaviyo has been added:
+Dawn uses [GitHub Actions](https://github.com/features/actions) to maintain the quality of the theme. [This is a starting point](https://github.com/Shopify/dawn/blob/main/.github/workflows/ci.yml) and what we suggest to use in order to ensure you're building better themes. Feel free to build off of it!
 
-```js
-window.dispatchEvent(new CustomEvent('ptupdate'));
-```
+#### Shopify/lighthouse-ci-action
 
-## Trekkie
+We love fast websites! Which is why we created [Shopify/lighthouse-ci-action](https://github.com/Shopify/lighthouse-ci-action). This runs a series of [Google Lighthouse](https://developers.google.com/web/tools/lighthouse) audits for the home, product and collections pages on a store to ensure code that gets added doesn't degrade storefront performance over time.
 
-- `snippets/global-partytown.liquid`
-- `assets/trekkie-partytown.js`
+#### Shopify/theme-check-action
 
-Trekkie is Shopify's own tracking engine and gets loaded as part of the `content_for_header` blackbox. We can thankfully still manipulate inline scripts using a [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver). Changing the type to `text/partytown` will prevent script execution and the script will instead be processed by Partytown. You need to rewire a couple more inline scripts as shown in `assets/trekkie-partytown.js`. Any script containing `ShopifyAnalytics` needs to get added to the Partytown instance and remain on the main page. Otherwise the site starts to throw errors.
+Dawn runs [Theme Check](#Theme-Check) on every commit via [Shopify/theme-check-action](https://github.com/Shopify/theme-check-action).
 
-Using the standard integrations for [Google Analytics](https://help.shopify.com/en/manual/reports-and-analytics/google-analytics/google-analytics-setup) and [Facebook](https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/meta-pixel) with "partytowned" Trekkie leads to the attached pixels also being loaded within a Web Worker. I haven't fully tested this method, so treat it with caution and confirm that the data is correctly being collected by the third partys vendors.
+## Contributing
 
-You can also block trekkie using the `partydawn_trekkie_disabled` theme setting to test other Facebook and GA4 implementations (like GTM/SGTM).
+Want to make commerce better for everyone by contributing to Dawn? We'd love your help! Please read our [contributing guide](https://github.com/Shopify/dawn/blob/main/.github/CONTRIBUTING.md) to learn about our development process, how to propose bug fixes and improvements, and how to build for Dawn.
 
-## Testing Improvements With Lighthouse
+## Code of conduct
 
-With the setup you can easily switch between Partytown and conventional tracking and compare the speed benefits. I installed a lot of app clutter on the shop because admittedly Dawn is pretty fast with and without tracking in its original version. In a usual production environment you will inevitably add apps and fill the store with JavaScript that you often cannot directly control. That's when Partytown might be able to give you a bit relief, because you start to see the usual issues.
+All developers who wish to contribute through code or issues, please first read our [Code of Conduct](https://github.com/Shopify/dawn/blob/main/.github/CODE_OF_CONDUCT.md).
 
-| Tracking Type | Page | Performance | Link |
-| ------------- | ---- | ----------: | ---- |
-| Conventional | Index | **<font color="orange">86</font>** | [Click](https://googlechrome.github.io/lighthouse/viewer/?gist=da2124e116eb41a293b687b97c0101f2)
-| Conventional | Collection | **<font color="orange">77</font>** | [Click](https://googlechrome.github.io/lighthouse/viewer/?gist=6b1eba2a68cc0b73cbc1939c19ec6773)
-| Conventional | Product | **<font color="orange">77</font>** | [Click](https://googlechrome.github.io/lighthouse/viewer/?gist=64b8171fc30ed6079844588d3db99e42)
-| Partytown | Index | **<font color="green">97</font>** | [Click](https://googlechrome.github.io/lighthouse/viewer/?gist=00acac7925677fba8980d90acee5f20c)
-| Partytown | Collection | **<font color="green">97</font>** | [Click](https://googlechrome.github.io/lighthouse/viewer/?gist=db48fa9e3544e4e4ce9a603c3b4eece0)
-| Partytown | Product | **<font color="green">92</font>** | [Click](https://googlechrome.github.io/lighthouse/viewer/?gist=dbd6f80051ee33d69a09e5b7053e8be5)
+## Theme Store submission
 
-### Resources and Credits
+The [Shopify Theme Store](https://themes.shopify.com/) is the place where Shopify merchants find the themes that they'll use to showcase and support their business. As a theme partner, you can create themes for the Shopify Theme Store and reach an international audience of an ever-growing number of entrepreneurs.
 
-- https://github.com/malipetek/shopify-partytown
-- https://github.com/edlaver/cloudflare-worker-partytown-shopify-app-proxy/tree/main
-- https://gist.github.com/montalvomiguelo/3a8da3b6db29091ecb4b04265a58bd3b
+Ensure that you follow the list of [theme store requirements](https://shopify.dev/themes/store/requirements) if you're interested in becoming a [Shopify Theme Partner](https://themes.shopify.com/services/themes/guidelines) and building themes for the Shopify platform.
 
-### A Word Of Caution
+## License
 
-Please note that this is not the intended way of tracking in Shopify OS 2.0. Anything used here can break at any time if Shopify decides to change the way Trekkie or Web Pixels work. In a production environment you need to have a dev watching over your site or Partytown might cause more harm than good. Any theme should have a "kill switch" to return to conventional tracking in case something breaks.
-
-Other than that: Have fun offloading your tracking scripts!
+Copyright (c) 2021-present Shopify Inc. See [LICENSE](/LICENSE.md) for further details.
