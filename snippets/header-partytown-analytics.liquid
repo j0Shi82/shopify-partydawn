@@ -48,9 +48,9 @@
   {%- endif -%}
 
   if (isSessionStorageAvailable()) {
-    sessionStorage.setItem('partydawn_gtm_id', '{{ settings.partydawn_gtm_id }}');
-    sessionStorage.setItem('partydawn_gtm_server', '{{ settings.partydawn_gtm_server }}');
+    sessionStorage.setItem('partydawn_gtm_id', {{ settings.partydawn_gtm_id | json }});
+    sessionStorage.setItem('partydawn_gtm_server', {{ settings.partydawn_gtm_server | json }});
     sessionStorage.setItem('partydawn_gtm_load_in_pixel', {{ settings.partydawn_gtm_mode | json }} === 'wpm');
-    sessionStorage.setItem('partydawn_gtm_used', {{ settings.partydawn_gtm_used }});
+    sessionStorage.setItem('partydawn_gtm_used', {{ settings.partydawn_gtm_used | json }});
   }
 </script>
