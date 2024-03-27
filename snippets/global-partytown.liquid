@@ -57,8 +57,8 @@
   };
 </script>
 <script>
+  /* Partytown 0.10.1 - MIT builder.io */
   (function () {
-    /* Partytown 0.9.2 - MIT builder.io */
     const t = { preserveBehavior: !1 },
       e = (e) => {
         if ('string' == typeof e) return [e, t];
@@ -100,16 +100,17 @@
                     }, console.error)
                   : v())));
       }
-      function y(t) {
-        (p = r.createElement(t ? 'script' : 'iframe')),
-          t ||
+      function y(e) {
+        (p = r.createElement(e ? 'script' : 'iframe')),
+          (t._pttab = Date.now()),
+          e ||
             ((p.style.display = 'block'),
             (p.style.width = '0'),
             (p.style.height = '0'),
             (p.style.border = '0'),
             (p.style.visibility = 'hidden'),
             p.setAttribute('aria-hidden', !0)),
-          (p.src = c + 'partytown-' + (t ? 'atomics.js?v=0.9.2' : 'sandbox-sw.html?' + Date.now())),
+          (p.src = c + 'partytown-' + (e ? 'atomics.js?v=0.10.1' : 'sandbox-sw.html?' + t._pttab)),
           r.querySelector(s.sandboxParent || 'body').appendChild(p);
       }
       function v(n, o) {
