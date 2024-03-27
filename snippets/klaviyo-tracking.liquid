@@ -113,11 +113,11 @@
 
     await waitForCustomerPrivacy();
 
-    if (window.Shopify.customerPrivacy.thirdPartyMarketingAllowed()) {
+    if (window.Shopify.customerPrivacy.marketingAllowed()) {
       startKl()
     } else {
       document.addEventListener("visitorConsentCollected", function(event) {
-        if (event.detail.thirdPartyMarketingAllowed) {
+        if (event.detail.marketingAllowed) {
           startKl()
         }
       });
